@@ -4,27 +4,17 @@ import { ref, computed, watch, onMounted } from 'vue';
   const todoDescriptionInput = ref('')
   const todoCategoryInput = ref(null)
   const todos = ref([])
-  const todos_asc = computed(() => {
-    todos.value.sort((a, b) => {
-      a.createdAt - b.createdAt
-    })
-  })
-
+  const todosAsc = computed(() => todos.value.sort((a, b) => b.date - a.date))
   const addTodo = () => {
-    console.log('todoDesc', todoDescriptionInput.value, 'todoCat', todoCategoryInput.value)
-
     if(todoDescriptionInput.value === '' || todoCategoryInput.value === null) return alert('Please enter a todo')
     let todoList = JSON.parse(localStorage.getItem('todos')) || []
-    console.log(todoList, 'i got todolist', 'todoDesc', todoDescriptionInput.value, 'todoCat', todoCategoryInput.value)
     todos.value.push({id: todoList.length+1, todoDescription: todoDescriptionInput.value, todoCategory: todoCategoryInput.value, date: new Date().getTime()})
     todoDescriptionInput.value = ''
     todoCategoryInput.value = null
   }
 
   onMounted(() => {
-    console.log('got here now')
     todos.value = JSON.parse(localStorage.getItem('todos')) || []
-    console.log('mounted todos:', todos.value)
   })
 
   watch(todos, (newVal) => {
@@ -61,7 +51,7 @@ import { ref, computed, watch, onMounted } from 'vue';
         </section>
         <section class="showTodolist">
           <h3>TODO LIST</h3>
-          <div v-for="todo in todos" :key="todo.id">
+          <div v-for="todo in todosAsc" :key="todo.id">
             <div>
               <span>{{ todo.id }}</span>
               <span>{{ todo.todoDescription }}</span>
