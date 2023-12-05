@@ -8,7 +8,12 @@ import { ref, computed, watch, onMounted } from 'vue';
   const addTodo = () => {
     if(todoDescriptionInput.value === '' || todoCategoryInput.value === null) return alert('Please enter a todo')
     let todoList = JSON.parse(localStorage.getItem('todos')) || []
-    todos.value.push({id: todoList.length+1, todoDescription: todoDescriptionInput.value, todoCategory: todoCategoryInput.value, date: new Date().getTime()})
+    todos.value.push({
+      id: todoList.length+1, 
+      todoDescription: todoDescriptionInput.value, 
+      todoCategory: todoCategoryInput.value,
+      todoStatus: false, 
+      date: new Date().getTime()})
     todoDescriptionInput.value = ''
     todoCategoryInput.value = null
   }
@@ -25,44 +30,47 @@ import { ref, computed, watch, onMounted } from 'vue';
 </script>
 
 <template>
-  <section class="container">
-    <section class="header">
-      <h3>What's up, {{username}} {{todoDescriptionInput}} {{todoCategoryInput}}</h3>
+  <main class="app">
+    <section class="greeting">
+      <h3 class="title">What's up, {{username}}</h3>
     </section>
-    <section class="createTodo">
-      <form action="" @submit.prevent="" class="todoForm">
-        <section class="inputTodo">
-          <h2>CREATE A TODO</h2>
-          <p>What's on your todo list today?</p>
-          <input type="text" v-model="todoDescriptionInput" class="todoDescription">
-        </section>
-        <section class="selectCategory">
-          <p>Pick a category</p>
-          <label for="todoCategory">
+    <section class="create-todo">
+      <h3>CREATE A TODO</h3>
+      <form @submit.prevent="addTodo">
+        <h4>What's on your todo list today?</h4>
+        <input type="text" v-model="todoDescriptionInput" class="todoDescription">
+        <h4>Pick a category</h4>
+        <div class="options">
+          <label>
             <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="Personal">
-            Personal
-            <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="Business">
-            Business
+            <span class="bubble personal"></span>
+            <div>Personal</div>
           </label>
-        </section>
-        <section class="addTodo">
-          <br>
-          <input type="submit" @click="addTodo" class="addTodo">
-        </section>
-        <section class="showTodolist">
-          <h3>TODO LIST</h3>
-          <div v-for="todo in todosAsc" :key="todo.id">
-            <div>
-              <span>{{ todo.id }}</span>
-              <span>{{ todo.todoDescription }}</span>
-              <span>{{ todo.todoCategory }}</span>
-              <span>{{ todo.date }}</span>
-            </div>
-          </div>
-        </section>
-        {{todoCategoryInput}}
+          <label>
+            <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="Business">
+            <span class="bubble business"></span>
+            <div>Business</div>
+          </label>
+          <input type="submit" value="Add todo">
+
+        </div>
       </form>
     </section>
-  </section>
-</template>
+    <section class="todo-list">
+      <h3>TODO LIST</h3>
+      <div class="list">
+        <div v-for="todo in todosAsc" :key="todo.id" :class="`todo-item ${todo.todoStatus && 'done'}`">
+          <label>
+            <input type="checkbox" v-model="todo.todoStatus">
+            <span :class="`bubble ${todo.todoCategory}`">
+            </span>
+          </label>
+          <div class="todo-content">
+            <input type="text" v-model="todo.todoDescription">
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+ </template>
 
