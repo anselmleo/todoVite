@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
-  const username = "Henry"
+  const username = "Florah"
   const todoDescriptionInput = ref('')
   const todoCategoryInput = ref(null)
   const todos = ref([])
@@ -17,6 +17,9 @@ import { ref, computed, watch, onMounted } from 'vue';
     todoDescriptionInput.value = ''
     todoCategoryInput.value = null
   }
+  const removeTodo = (todo) => {
+    return todos.value = todos.value.filter((item) => todo !== item)
+  }
 
   onMounted(() => {
     todos.value = JSON.parse(localStorage.getItem('todos')) || []
@@ -25,8 +28,6 @@ import { ref, computed, watch, onMounted } from 'vue';
   watch(todos, (newVal) => {
     localStorage.setItem('todos', JSON.stringify(newVal))
   }, {deep: true})
-
-
 </script>
 
 <template>
@@ -42,18 +43,17 @@ import { ref, computed, watch, onMounted } from 'vue';
         <h4>Pick a category</h4>
         <div class="options">
           <label>
-            <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="Personal">
+            <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="M&A">
             <span class="bubble personal"></span>
-            <div>Personal</div>
+            <div>M&A</div>
           </label>
           <label>
-            <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="Business">
+            <input type="radio" v-model="todoCategoryInput" name="todoCategory" value="FLORAH">
             <span class="bubble business"></span>
-            <div>Business</div>
+            <div>FLORAH</div>
           </label>
-          <input type="submit" value="Add todo">
-
         </div>
+        <input type="submit" value="Add todo">
       </form>
     </section>
     <section class="todo-list">
@@ -62,11 +62,14 @@ import { ref, computed, watch, onMounted } from 'vue';
         <div v-for="todo in todosAsc" :key="todo.id" :class="`todo-item ${todo.todoStatus && 'done'}`">
           <label>
             <input type="checkbox" v-model="todo.todoStatus">
-            <span :class="`bubble ${todo.todoCategory}`">
+            <span :class="`bubble ${todo.todoCategory === 'FLORAH' ? 'business' : 'personal'}`">
             </span>
           </label>
           <div class="todo-content">
             <input type="text" v-model="todo.todoDescription">
+          </div>
+          <div class="actions">
+            <button class="delete" @click="removeTodo(todo)">Delete</button>
           </div>
         </div>
       </div>
